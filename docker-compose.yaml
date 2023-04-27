@@ -1,0 +1,89 @@
+version: "3"
+
+services:
+
+  sleek_mongodb:
+    container_name: "sleek_mongodb"
+    platform: linux/amd64
+    image: mongo:4.4.14
+    ports:
+      - "27018:27017"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+    networks:
+      - backend
+
+  # sleek_chat_management:
+  #   container_name: sleek_chat_management
+  #   build: ./sleek_chat_management
+  #   command: npm start
+  #   ports:
+  #     - "4000:4000"
+  #   volumes:
+  #     - .:/usr/app/sleek_chat_management
+  #   links:
+  #     - sleek_mongodb
+  #   depends_on:
+  #     - sleek_mongodb
+  #   networks:
+  #     - backend
+  #   restart: always
+
+  
+  sleek_user_management:
+    container_name: sleek_user_management
+    build: ./sleek_user_management
+    command: npm start
+    ports:
+      - "4001:4001"
+    volumes:
+      - .:/usr/app/sleek_user_management
+      - ./sleek_user_management/public:/sleek_user_management/public
+    links:
+      - sleek_mongodb
+    depends_on:
+      - sleek_mongodb
+    networks:
+      - backend
+    restart: always
+
+
+  sleek_vehicle_management:
+    container_name: sleek_vehicle_management
+    build: ./sleek_vehicle_management
+    command: npm start
+    ports:
+      - "4002:4002"
+    volumes:
+      - .:/usr/app/sleek_vehicle_management
+      - ./sleek_vehicle_management/public:/sleek_vehicle_management/public
+    links:
+      - sleek_mongodb
+    depends_on:
+      - sleek_mongodb
+    networks:
+      - backend
+    restart: always
+
+  sleek_insights_management:
+    container_name: sleek_insights_management
+    build: ./sleek_insights_management
+    command: npm start
+    ports:
+      - "4003:4003"
+    volumes:
+      - .:/usr/app/sleek_insights_management
+      - ./sleek_insights_management/public:/sleek_insights_management/public
+    links:
+      - sleek_mongodb
+    depends_on:
+      - sleek_mongodb
+    networks:
+      - backend
+    restart: always
+
+
+networks:
+  backend:
+    driver: bridge
